@@ -58,9 +58,16 @@ II. 전처리
 
 III. 모델별 실험 코드 파일 추가하실 분은 따와서 추가해주세여 그리고 이 문장은 지워주세용
 ----------------
-1. 벡터화: TF-IDF / Count Vectorizer 적용
-- Count Vectorizer
-- TF-IDF Vectorizer
+1. 벡터화: TF-IDF / Count Vectorizer 적용 및 비교
+- 공통 옵션값 적용후  f1-score 비교
+  - Count Vectorizer 옵션값  : min_df=0.0, analyzer='char', ngram_range=(1,3), max_features=5000
+  - TF-IDF Vectorizer 옵션값 : min_df=0.0, analyzer='char', ngram_range=(1,3), max_features=5000, sublinear_tf=True
+```
+KFold f1_score  :: TF :  0.5519975598739248 , CV :  0.5395692760168908
+SKFold f1_score :: TF :  0.5531487999460587 , CV :  0.5410395492065031
+dev 파일        :: TF :  0.5773105429455988 , CV :  0.5594804815636172
+```
+  - TF-IDF Vectorizer의 f1-score가 조금 우세한것을 확인할수 있음
 * (코드 파일 링크)
 
 2. 머신러닝 모델: 직접 함수를 생성하기도 하고 다양한 모델링 기법을 사용하며 성능을 개선하기 위해 비교해 보았음
@@ -127,7 +134,17 @@ IV. Logistic Regression에 집중한 분류
 - 각 코멘트 뒤에 라벨을 태그로 입력하여 dbow와 dm 두 가지 방법으로 벡터화한 후 각각 모델링한 값과 둘을 concat하여 모델링한 값 3가지를
 - F1-score: 0.546942 / Kaggle score: 0.49027
 * [Doc2Vec 사용한 Logistic Regression](https://github.com/hayoon/nlp_hate_speech/blob/master/code/yeji/09_doc2vec.ipynb)
-4. 기중님 파트
+4. 시도
+- 전처리 없이 - TF-IDF Vectorizer - Logistic Regression
+  * [tf-idf max_features 테스트]()
+  * [tf-idf ngram_range/ max_features 테스트]()
+  - Validation Data 예측 F1-Score: 0.619 / Kaggle score : 0.528
+- 전처리 - TF-IDF Vectorizer - Logistic Regression
+  - 최고점 갱신 옵션값
+   - 전처리 : repeat_normalize - maxscore_tokenizer
+   - TF-IDF : min_df=0.0, analyzer='char', ngram_range=(1,3), sublinear_tf=True, max_features=100000
+  - [해당 코드]()
+  - Validation Data 예측 F1-Score: 0.625 / Kaggle score : 0.532
 
 V. 딥러닝 (Bert)
 ----------------
@@ -144,7 +161,7 @@ Built with: 대충 쓰긴 했는데 각자 한 일 추가할거 있으면 해주
   * Github: https://github.com/yeji0701
 - 이기중
   * 전처리, 다양한 머신러닝 모델링, Logistic Regression에 집중한 성능 개선,
-  * Github:
+  * Github: https://github.com/GIGI123422
 - 정하윤
   * 전처리, 다양한 머신러닝 모델링, 코사인 유사도 이용한 분류, BERT 이용하여 성능 개선
   * Github:
