@@ -68,7 +68,7 @@ SKFold f1_score :: TF :  0.5531487999460587 , CV :  0.5410395492065031
 dev 파일        :: TF :  0.5773105429455988 , CV :  0.5594804815636172
 ```
   - TF-IDF Vectorizer의 f1-score가 조금 우세한것을 확인할수 있음
-* (코드 파일 링크)
+* (https://github.com/hayoon/nlp_hate_speech/blob/master/code/gijoong/02_cv_tfidf_compare.ipynb)
 
 2. 머신러닝 모델: 직접 함수를 생성하기도 하고 다양한 모델링 기법을 사용하며 성능을 개선하기 위해 비교해 보았음
 - Naive Bayes
@@ -136,14 +136,13 @@ IV. Logistic Regression에 집중한 분류
 * [Doc2Vec 사용한 Logistic Regression](https://github.com/hayoon/nlp_hate_speech/blob/master/code/yeji/09_doc2vec.ipynb)
 4. 시도
 - 전처리 없이 - TF-IDF Vectorizer - Logistic Regression
-  * [tf-idf max_features 테스트]()
-  * [tf-idf ngram_range/ max_features 테스트]()
+  * [tf-idf 옵션값 테스트](https://github.com/hayoon/nlp_hate_speech/blob/master/code/gijoong/03_tf_idf_option_test.ipynb)
   - Validation Data 예측 F1-Score: 0.619 / Kaggle score : 0.528
 - 전처리 - TF-IDF Vectorizer - Logistic Regression
   - 최고점 갱신 옵션값
    - 전처리 : repeat_normalize - maxscore_tokenizer
    - TF-IDF : min_df=0.0, analyzer='char', ngram_range=(1,3), sublinear_tf=True, max_features=100000
-  - [해당 코드]()
+  - [해당 코드](https://github.com/hayoon/nlp_hate_speech/blob/master/code/gijoong/04_preprocessing.ipynb)
   - Validation Data 예측 F1-Score: 0.625 / Kaggle score : 0.532
 
 V. 딥러닝 (Bert)
