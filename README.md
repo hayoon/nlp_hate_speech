@@ -32,7 +32,7 @@ I. 프로젝트 개요
 ![image](https://user-images.githubusercontent.com/28764376/105451147-55a02680-5cbf-11eb-9f58-57d680e40851.png)
 
 4. 설치 패키지 
-- Python 3 (패키지 쓴거 추가해주세용 기억나는것만 썼어요 그리고 이 문장은 지워주세요)
+- Python 3 
 ```
 pip install pykospacing
 pip install kss
@@ -41,6 +41,8 @@ pip install soynlp
 git clone https://github.com/kakao/khaiii.git # khaii 설치 방법 참조
 pip install gensim
 pip install jamo
+pip install transformers
+pip install sentencepiece
 ```
 
 II. 전처리
@@ -86,8 +88,9 @@ dev 파일        :: TF :  0.5773105429455988 , CV :  0.5594804815636172
   * 출력된 유사도가 높은 댓글 top3의 라벨이 모두 일치할 경우, 해당 라벨과 가장 유사하다고 판단하여 같은 라벨로 예측
   * 출력된 유사도가 높은 댓글 top3의 라벨이 두 가지가 나왔을 경우, 유사도 값의 차이가 있을 수 있기 때문에 같은 라벨을 가진 값들끼리 유사도를 더하며, bias가 존재한다면 0.1을, 이것이 gender bias라면 0.2를 또 더해줘서 최종적으로 높은 값을 가지는 라벨로 예측
   * 출력된 유사도가 높은 댓글 top3릐 라벨이 모두 다르다면, 부정적인 댓글이 최수 두 가지 (offensive, hate)이기 때문에 마찬가지로 bias에 대한 가중치를 적용하고, 이 두 라벨 중 유사도가 더 높은 라벨로 예측
-  * validation data: F1-score (숫자 채워주세용)
-  * (코드 파일 링크)
+  * validation data: F1-score 0.448089
+  * [코사인 유사도를 이용하여 만든 분류 모델2](https://github.com/hayoon/nlp_hate_speech/blob/master/code/hayoon/cos_sim_predict_label.py)
+
 - 그 외 전처리하지 않고 기본 파라미터로 모델간 비교 실험(Test: Validation data)
 ```
   Model : RandomForestClassifier()
@@ -145,29 +148,49 @@ IV. Logistic Regression에 집중한 분류
   - [해당 코드](https://github.com/hayoon/nlp_hate_speech/blob/master/code/gijoong/04_preprocessing.ipynb)
   - Validation Data 예측 F1-Score: 0.625 / Kaggle score : 0.532
 
-V. 딥러닝 (Bert)
+V. 딥러닝 (KoBert)
 ----------------
+ - https://github.com/monologg/KoBERT-Transformers 에서 지원하는 pretrained tokenizer 사용
+ - config :
+ ```
+  "max_seq_len": 128,
+  "num_train_epochs": 10,
+  "adam_epsilon": 1e-8,
+  "train_batch_size": 32,
+  "eval_batch_size": 64,
+  "learning_rate": 5e-5
+ ```
+ 
+ - [해당 코드](https://github.com/hayoon/nlp_hate_speech/blob/master/code/hayoon/kobert_multiclass.ipynb)
+ - Validation Data 예측 F1-Score: 0.637 / Kaggle score : 0.57696
+ 
+ - Sample outputs on unlabeled test data
+ 
+ ![image](https://github.com/hayoon/nlp_hate_speech/blob/master/data/sample_output_01.png?raw=true)
+ ![image](https://github.com/hayoon/nlp_hate_speech/blob/master/data/sample_output_02.png?raw=true)
+ ![image](https://github.com/hayoon/nlp_hate_speech/blob/master/data/sample_output_03.png?raw=true)
 
 
 아쉬운 점과 앞으로 나아갈 수 있는 방향
 ---------------------------------------
 #### 각 머신러닝 모델들의 성능 결과에 대해 깊이 이해하지 못하고 넘어간 점에서 아쉬움
+#### 데이터 검증에 좀 더 시간을 들일수 있었다면 조금 더 모델의 정확도를 높일수 있었다고 생각
 
-Built with: 대충 쓰긴 했는데 각자 한 일 추가할거 있으면 해주세용 그리고 이 문장은 지워주세용
+Built with: 
 ----------
 - 김예지
   * 전처리, 다양한 머신러닝 모델링, 코사인 유사도 이용한 분류, doc2vec 사용하여 모델 성능 개선 시도
   * Github: https://github.com/yeji0701
 - 이기중
-  * 전처리, 다양한 머신러닝 모델링, Logistic Regression에 집중한 성능 개선,
+  * 전처리, 다양한 머신러닝 모델링, Logistic Regression에 집중한 성능 개선
   * Github: https://github.com/GIGI123422
 - 정하윤
-  * 전처리, 다양한 머신러닝 모델링, 코사인 유사도 이용한 분류, BERT 이용하여 성능 개선
-  * Github:
+  * 전처리, 다양한 머신러닝 모델링, 코사인 유사도 이용한 분류, KoBERT 이용하여 성능 개선
+  * Github: https://github.com/hayoon
 - 최재철
   * 전처리, 토크나이저별/모델별 성능 비교, 코사인 유사도 이용한 분류, JAMO 토크나이저 사용, Word2Vec을 이용한 모델 성능 개선 시도
   * Github: https://github.com/kkobooc
   
  Acknowledgements:
  -----------------
- 생각나는 거 없는데 있다면 추가해주세용 그리고 이 문장은 지워주세용
+ https://github.com/inmoonlight/koco
