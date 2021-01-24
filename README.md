@@ -1,7 +1,7 @@
 한국어 악플 분류를 위한 머신러닝 프로젝트
 ========================================
 본 프로젝트는 Kaggle Competition에서 사용된 데이터 셋을 이용하여 진행되었습니다. 
-[Korean hate speech (Kaggle)](https://www.kaggle.com/c/korean-hate-speech-detection/overview)
+* [Korean hate speech (Kaggle)](https://www.kaggle.com/c/korean-hate-speech-detection/overview)
 
 I. 프로젝트 개요
 ----------------
@@ -73,7 +73,7 @@ III. 모델별 실험 코드 파일 추가하실 분은 따와서 추가해주�
   * 훈련 데이터를 각 레이블별로 분류해 TFIDF Vectorize한 뒤, 각각의 평균 벡터값 산출
   * 'comment' 컬럼의 벡터값 <-> 각 레이블 평균 벡터값 간의 유사도 측정 후, 가장 유사도가 높은 레이블 리턴
   * validation data: F1-score 0.498306
-  * (코드 파일 링크)
+  * [코사인 유사도를 이용하여 만든 분류 모델](https://github.com/hayoon/nlp_hate_speech/blob/master/code/jc/05_Cosine_Similarity.ipynb)
 - 코사인 유사도-2
   * 댓글을 입력할 시, 코사인 유사도 top3 댓글을 출력하는 함수를 생성. khaiii를 이용한 형태소 분석 이전의 Naive Bayes를 써서 얻은 informative feature의 상위 100개에 포함되는 품사 단어들만 vocabulary list에 추가하여 분석하도록 함
   * 출력된 유사도가 높은 댓글 top3의 라벨이 모두 일치할 경우, 해당 라벨과 가장 유사하다고 판단하여 같은 라벨로 예측
@@ -104,7 +104,7 @@ III. 모델별 실험 코드 파일 추가하실 분은 따와서 추가해주�
   Test   0.546274  0.552017
   ------------------------------
   ```
-  * https://github.com/hayoon/nlp_hate_speech/blob/master/code/jc/02_2_Model_Comparison.ipynb
+  * [](https://github.com/hayoon/nlp_hate_speech/blob/master/code/jc/02_2_Model_Comparison.ipynb)
   * 전반적으로 Logistic Regression이 우수한 성능을 보여, Logistc Reg. 중심으로 성능 개선 시도
 
 IV. Logistic Regression에 집중한 분류
@@ -113,16 +113,20 @@ IV. Logistic Regression에 집중한 분류
 - 온라인 댓글 특성상 맞춤법이 지켜지지 않아 형태소별 토큰화의 정확도가 떨어진다고 판단, 자/모 분리하여 토큰화 시도
 - ngram(1, 6)에서 가장 우수한 성능을 보임
 - Validation Data 예측 F1-Score: 0.619 / Kaggle score : 0.516
-* https://github.com/hayoon/nlp_hate_speech/blob/master/code/jc/04_JAMO.ipynb
+* [JAMO 토크나이저 사용한 Logistic Regression](https://github.com/hayoon/nlp_hate_speech/blob/master/code/jc/04_JAMO.ipynb)
 2. Word2Vec 사용
 - 기존 Count/TFIDF Vectorizer는 단어의 의미와 문맥을 파악하지 못하는 단점이 존재
 - 추가로 제공된 댓글 데이터 중 100만개를 랜덤 샘플링하여 Word2Vec 모델 학습
 - 학습된 Word2Vec을 바탕으로 각 문장들을 Vectorize하여 Logistc Regression으로 예측
 - 모델 테스트시 유사 단어 추출은 좋았으나 실질적 악플 분류에 뛰어난 성능을 보여주지는 못함
 - Validation Data 예측 F1-Score: 0.546 / Kaggle score : 0.47134
-* https://github.com/hayoon/nlp_hate_speech/blob/master/code/jc/06_Word2Vec.ipynb
-* https://github.com/hayoon/nlp_hate_speech/blob/master/code/jc/million_comments.model
+* [Word2Vec 사용한 Logistic Regression](https://github.com/hayoon/nlp_hate_speech/blob/master/code/jc/06_Word2Vec.ipynb)
+* [Word2Vec model](https://github.com/hayoon/nlp_hate_speech/blob/master/code/jc/million_comments.model)
 3. Doc2Vec
+- validation data와 train data를 합쳐서 train과 test로 split하여 학습 시킴
+- 각 코멘트 뒤에 라벨을 태그로 입력하여 dbow와 dm 두 가지 방법으로 벡터화한 후 각각 모델링한 값과 둘을 concat하여 모델링한 값 3가지를
+- F1-score: 0.546942 / Kaggle score: 0.49027
+* [Doc2Vec 사용한 Logistic Regression](https://github.com/hayoon/nlp_hate_speech/blob/master/code/yeji/09_doc2vec.ipynb)
 4. 기중님 파트
 
 V. 딥러닝 (Bert)
