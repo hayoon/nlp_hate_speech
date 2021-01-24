@@ -82,6 +82,7 @@ III. 모델별 실험 코드 파일 추가하실 분은 따와서 추가해주�
   * validation data: F1-score (숫자 채워주세용)
   * (코드 파일 링크)
 - 그 외 전처리하지 않고 기본 파라미터로 모델간 비교 실험(Test: Validation data)
+```
   Model : RandomForestClassifier()
          F1 Score  Accuracy
   Train  0.998677  0.998734
@@ -102,6 +103,7 @@ III. 모델별 실험 코드 파일 추가하실 분은 따와서 추가해주�
   Train  0.787965  0.796479
   Test   0.546274  0.552017
   ------------------------------
+  ```
   * https://github.com/hayoon/nlp_hate_speech/blob/master/code/jc/02_2_Model_Comparison.ipynb
   * 전반적으로 Logistic Regression이 우수한 성능을 보여, Logistc Reg. 중심으로 성능 개선 시도
 
