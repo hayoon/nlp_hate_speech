@@ -38,15 +38,18 @@ pip install pykospacing
 pip install kss
 pip install konlpy
 pip install soynlp
+git clone https://github.com/kakao/khaiii.git # khaii 설치 방법 참조
+pip install gensim
+pip install jamo
 ```
 
 II. 전처리
 -----------
 1. 적용 모델에 따라 전처리를 다르게 진행하거나, 아예 전처리를 하지 않은 부분도 있으나 기본적인 전처리는 아래와 같은 프로세스로 진행 되었음:
-- 특수문자 제거
-- 문장 분리
-- 띄어쓰기
-- 중복 제거
+- 특수문자 제거(자체 함수 사용)
+- 문장 분리(kss)
+- 띄어쓰기(pykospacing)
+- 중복 제거(soynlp.normalize)
 
 2. 토크나이저
 - Khaiii
@@ -55,45 +58,70 @@ II. 전처리
 
 III. 모델별 실험 코드 파일 추가하실 분은 따와서 추가해주세여 그리고 이 문장은 지워주세용
 ----------------
-1. 벡터화: Kfold, stratifiedKfold, validation data 등 세 가지 검증 방법에 각각 TF-IDF와 Count vectorizer 방법을 적용해 보았음
-- CountVectorizer
-- TF-IDFVectorizer
+1. 벡터화: TF-IDF / Count Vectorizer 적용
+- Count Vectorizer
+- TF-IDF Vectorizer
 * (코드 파일 링크)
 
 2. 머신러닝 모델: 직접 함수를 생성하기도 하고 다양한 모델링 기법을 사용하며 성능을 개선하기 위해 비교해 보았음
 - Naive Bayes
-  * 두 가지 전처리 방법으로 모델링을 시도하여, 특수문자와 공백을 모두 제거한 뒤 띄어쓰기한 경우에 성능이 더 좋았던 것으로 나왔음
-  * 나이브 베이즈의 'Most informative features'를 통하여 각 라벨에 영향을 주는 단어들을 한눈에 확인할 수 있었음
+  * 두 가지 전처리 방법으로 모델링을 시도하여, 특수문자와 공백을 모두 제거한 뒤 띄어쓰기한 경우에 성능이 더 좋았음
+  * 나이브 베이즈의 'Most informative features'를 통하여 각 라벨에 영향을 주는 단어들을 확인할 수 있었음
   * validation data: F1-score 0.525420
   * [나이브 베이즈를 이용한 분류 예측](https://github.com/hayoon/nlp_hate_speech/blob/master/code/yeji/02_naivebayes_trial.ipynb)
-- 코사인 유사도1
+- 코사인 유사도-1
   * 훈련 데이터를 각 레이블별로 분류해 TFIDF Vectorize한 뒤, 각각의 평균 벡터값 산출
-  * 'comment' 컬럼의 벡터값 <-> 각 레이블 평균 벡터값 간의 유사도 측정 후, 가장 유사도가 높은 레이블 알려주기
+  * 'comment' 컬럼의 벡터값 <-> 각 레이블 평균 벡터값 간의 유사도 측정 후, 가장 유사도가 높은 레이블 리턴
   * validation data: F1-score 0.498306
   * (코드 파일 링크)
-- 코사인 유사도1
+- 코사인 유사도-2
   * 댓글을 입력할 시, 코사인 유사도 top3 댓글을 출력하는 함수를 생성. khaiii를 이용한 형태소 분석 이전의 Naive Bayes를 써서 얻은 informative feature의 상위 100개에 포함되는 품사 단어들만 vocabulary list에 추가하여 분석하도록 함
   * 출력된 유사도가 높은 댓글 top3의 라벨이 모두 일치할 경우, 해당 라벨과 가장 유사하다고 판단하여 같은 라벨로 예측
   * 출력된 유사도가 높은 댓글 top3의 라벨이 두 가지가 나왔을 경우, 유사도 값의 차이가 있을 수 있기 때문에 같은 라벨을 가진 값들끼리 유사도를 더하며, bias가 존재한다면 0.1을, 이것이 gender bias라면 0.2를 또 더해줘서 최종적으로 높은 값을 가지는 라벨로 예측
   * 출력된 유사도가 높은 댓글 top3릐 라벨이 모두 다르다면, 부정적인 댓글이 최수 두 가지 (offensive, hate)이기 때문에 마찬가지로 bias에 대한 가중치를 적용하고, 이 두 라벨 중 유사도가 더 높은 라벨로 예측
   * validation data: F1-score (숫자 채워주세용)
   * (코드 파일 링크)
-- 그 외 분류기들
-  * Random Forest
-    * validation data: F1-score (숫자 채워주세용)
-  * Support Vector Machine
-    * validation data: F1-score (숫자 채워주세용)
-  * LightGBM
-    * validation data: F1-score (숫자 채워주세용)
-  * 전처리 과정 쓰세요
-  * (코드 파일 링크)
+- 그 외 전처리하지 않고 기본 파라미터로 모델간 비교 실험(Test: Validation data)
+  Model : RandomForestClassifier()
+         F1 Score  Accuracy
+  Train  0.998677  0.998734
+  Test   0.487739  0.513800
+  ------------------------------
+  Model : LogisticRegression()
+         F1 Score  Accuracy
+  Train  0.832283  0.841565
+  Test   0.579778  0.585987
+  ------------------------------
+  Model : SVC()
+         F1 Score  Accuracy
+  Train  0.973995  0.974924
+  Test   0.536260  0.552017
+  ------------------------------
+  Model : LGBMClassifier()
+         F1 Score  Accuracy
+  Train  0.787965  0.796479
+  Test   0.546274  0.552017
+  ------------------------------
+  * https://github.com/hayoon/nlp_hate_speech/blob/master/code/jc/02_2_Model_Comparison.ipynb
+  * 전반적으로 Logistic Regression이 우수한 성능을 보여, Logistc Reg. 중심으로 성능 개선 시도
 
 IV. Logistic Regression에 집중한 분류
 --------------------------------------
-1.
-2.
-3.
-4.
+1. JAMO 토크나이저 사용
+- 온라인 댓글 특성상 맞춤법이 지켜지지 않아 형태소별 토큰화의 정확도가 떨어진다고 판단, 자/모 분리하여 토큰화 시도
+- ngram(1, 6)에서 가장 우수한 성능을 보임
+- Validation Data 예측 F1-Score: 0.619 / Kaggle score : 0.516
+* https://github.com/hayoon/nlp_hate_speech/blob/master/code/jc/04_JAMO.ipynb
+2. Word2Vec 사용
+- 기존 Count/TFIDF Vectorizer는 단어의 의미와 문맥을 파악하지 못하는 단점이 존재
+- 추가로 제공된 댓글 데이터 중 100만개를 랜덤 샘플링하여 Word2Vec 모델 학습
+- 학습된 Word2Vec을 바탕으로 각 문장들을 Vectorize하여 Logistc Regression으로 예측
+- 모델 테스트시 유사 단어 추출은 좋았으나 실질적 악플 분류에 뛰어난 성능을 보여주지는 못함
+- Validation Data 예측 F1-Score: 0.546 / Kaggle score : 0.47134
+* https://github.com/hayoon/nlp_hate_speech/blob/master/code/jc/06_Word2Vec.ipynb
+* https://github.com/hayoon/nlp_hate_speech/blob/master/code/jc/million_comments.model
+3. Doc2Vec
+4. 기중님 파트
 
 V. 딥러닝 (Bert)
 ----------------
@@ -115,8 +143,8 @@ Built with: 대충 쓰긴 했는데 각자 한 일 추가할거 있으면 해주
   * 전처리, 다양한 머신러닝 모델링, 코사인 유사도 이용한 분류, BERT 이용하여 성능 개선
   * Github:
 - 최재철
-  * 전처리, 다양한 머신러닝 모델링, 코사인 유사도 이용한 분류, word2vec 사용하여 모델 성능 개선 시도
-  * Github:
+  * 전처리, 토크나이저별/모델별 성능 비교, 코사인 유사도 이용한 분류, JAMO 토크나이저 사용, Word2Vec을 이용한 모델 성능 개선 시도
+  * Github: https://github.com/kkobooc
   
  Acknowledgements:
  -----------------
