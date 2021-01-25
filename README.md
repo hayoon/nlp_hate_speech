@@ -43,6 +43,7 @@ pip install gensim
 pip install jamo
 pip install transformers
 pip install sentencepiece
+pip install hanspell
 ```
 
 II. 전처리
@@ -62,15 +63,15 @@ III. 모델별 실험 코드 파일 추가하실 분은 따와서 추가해주�
 ----------------
 1. 벡터화: TF-IDF / Count Vectorizer 적용 및 비교
 - 공통 옵션값 적용후  f1-score 비교
-  - Count Vectorizer 옵션값  : min_df=0.0, analyzer='char', ngram_range=(1,3), max_features=5000
-  - TF-IDF Vectorizer 옵션값 : min_df=0.0, analyzer='char', ngram_range=(1,3), max_features=5000, sublinear_tf=True
+  * Count Vectorizer 옵션값  : min_df=0.0, analyzer='char', ngram_range=(1,3), max_features=5000
+  * TF-IDF Vectorizer 옵션값 : min_df=0.0, analyzer='char', ngram_range=(1,3), max_features=5000, sublinear_tf=True
 ```
 KFold f1_score  :: TF :  0.5519975598739248 , CV :  0.5395692760168908
 SKFold f1_score :: TF :  0.5531487999460587 , CV :  0.5410395492065031
 dev 파일        :: TF :  0.5773105429455988 , CV :  0.5594804815636172
 ```
-  - TF-IDF Vectorizer의 f1-score가 조금 우세한것을 확인할수 있음
-* (https://github.com/hayoon/nlp_hate_speech/blob/master/code/gijoong/02_cv_tfidf_compare.ipynb)
+  * TF-IDF Vectorizer의 f1-score가 조금 우세한것을 확인할수 있음
+  * [벡터라이징 기법 비교](https://github.com/hayoon/nlp_hate_speech/blob/master/code/gijoong/02_cv_tfidf_compare.ipynb)
 
 2. 머신러닝 모델: 직접 함수를 생성하기도 하고 다양한 모델링 기법을 사용하며 성능을 개선하기 위해 비교해 보았음
 - Naive Bayes
@@ -114,7 +115,7 @@ dev 파일        :: TF :  0.5773105429455988 , CV :  0.5594804815636172
   Test   0.546274  0.552017
   ------------------------------
   ```
-  * [](https://github.com/hayoon/nlp_hate_speech/blob/master/code/jc/02_2_Model_Comparison.ipynb)
+  * [다양한 모델 ](https://github.com/hayoon/nlp_hate_speech/blob/master/code/jc/02_2_Model_Comparison.ipynb)
   * 전반적으로 Logistic Regression이 우수한 성능을 보여, Logistc Reg. 중심으로 성능 개선 시도
 
 IV. Logistic Regression에 집중한 분류
@@ -140,13 +141,13 @@ IV. Logistic Regression에 집중한 분류
 4. 시도
 - 전처리 없이 - TF-IDF Vectorizer - Logistic Regression
   * [tf-idf 옵션값 테스트](https://github.com/hayoon/nlp_hate_speech/blob/master/code/gijoong/03_tf_idf_option_test.ipynb)
-  - Validation Data 예측 F1-Score: 0.619 / Kaggle score : 0.528
+  * Validation Data 예측 F1-Score: 0.619 / Kaggle score : 0.528
 - 전처리 - TF-IDF Vectorizer - Logistic Regression
-  - 최고점 갱신 옵션값
-   - 전처리 : repeat_normalize - maxscore_tokenizer
-   - TF-IDF : min_df=0.0, analyzer='char', ngram_range=(1,3), sublinear_tf=True, max_features=100000
-  - [해당 코드](https://github.com/hayoon/nlp_hate_speech/blob/master/code/gijoong/04_preprocessing.ipynb)
-  - Validation Data 예측 F1-Score: 0.625 / Kaggle score : 0.532
+  * 최고점 갱신 옵션값
+    * 전처리 : repeat_normalize - maxscore_tokenizer
+    * TF-IDF : min_df=0.0, analyzer='char', ngram_range=(1,3), sublinear_tf=True, max_features=100000
+  * [전처리 진행 방법](https://github.com/hayoon/nlp_hate_speech/blob/master/code/gijoong/04_preprocessing.ipynb)
+  * Validation Data 예측 F1-Score: 0.625 / Kaggle score : 0.532
 
 V. 딥러닝 (KoBert)
 ----------------
@@ -161,7 +162,7 @@ V. 딥러닝 (KoBert)
   "learning_rate": 5e-5
  ```
  
- - [해당 코드](https://github.com/hayoon/nlp_hate_speech/blob/master/code/hayoon/kobert_multiclass.ipynb)
+ - [KoBert를 이용한 분류](https://github.com/hayoon/nlp_hate_speech/blob/master/code/hayoon/kobert_multiclass.ipynb)
  - Validation Data 예측 F1-Score: 0.637 / Kaggle score : 0.57696
  
  - Sample outputs on unlabeled test data
@@ -169,12 +170,6 @@ V. 딥러닝 (KoBert)
  ![image](https://github.com/hayoon/nlp_hate_speech/blob/master/data/sample_output_01.png?raw=true)
  ![image](https://github.com/hayoon/nlp_hate_speech/blob/master/data/sample_output_02.png?raw=true)
  ![image](https://github.com/hayoon/nlp_hate_speech/blob/master/data/sample_output_03.png?raw=true)
-
-
-아쉬운 점과 앞으로 나아갈 수 있는 방향
----------------------------------------
-#### 각 머신러닝 모델들의 성능 결과에 대해 깊이 이해하지 못하고 넘어간 점에서 아쉬움
-#### 데이터 검증에 좀 더 시간을 들일수 있었다면 조금 더 모델의 정확도를 높일수 있었다고 생각
 
 Built with: 
 ----------
